@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Nutrition Calculator</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #e8f5e9;
+}
+h1 { color: green; }
+select, input { padding: 10px; margin: 10px; }
+button {
+  padding: 10px 20px;
+  background: green;
+  color: white;
+  border: none;
+}
+#result { margin-top: 20px; font-size: 18px; }
+</style>
+
+</head>
+
+<body>
+
+<h1 id="title">Nutrition Calculator</h1>
+
+<select id="lang" onchange="changeLang()">
+  <option value="en">English</option>
+  <option value="ta">தமிழ்</option>
+</select>
+
+<br>
+
+<select id="food">
+  <option value="idli">Idli</option>
+  <option value="dosa">Dosa</option>
+  <option value="rice">Rice</option>
+</select>
+
+<br>
+
+<input type="number" id="qty" placeholder="Quantity">
+
+<br>
+
+<button onclick="calculate()" id="btn">Calculate</button>
+
+<div id="result"></div>
+
+<script>
+let currentLang = "en";
+
+const foods = {
+  idli: { en:"Idli", ta:"இட்லி", cal:39, carbs:8, gi:"Low" },
+  dosa: { en:"Dosa", ta:"தோசை", cal:120, carbs:22, gi:"Medium" },
+  rice: { en:"Rice", ta:"சாதம்", cal:200, carbs:45, gi:"High" }
+};
+
+function changeLang() {
+  currentLang = document.getElementById("lang").value;
+
+  if(currentLang === "ta") {
+    document.getElementById("title").innerText = "தமிழ் Nutrition Calculator";
+    document.getElementById("btn").innerText = "கணக்கிடு";
+    document.getElementById("qty").placeholder = "எண்ணிக்கை";
+  } else {
+    document.getElementById("title").innerText = "Nutrition Calculator";
+    document.getElementById("btn").innerText = "Calculate";
+    document.getElementById("qty").placeholder = "Quantity";
+  }
+}
+
+function calculate() {
+  const foodKey = document.getElementById("food").value;
+  const qty = document.getElementById("qty").value;
+
+  if(qty === "" || qty <= 0) {
+    document.getElementById("result").innerHTML = currentLang==="ta" 
+      ? "⚠️ சரியான எண்ணிக்கை கொடுக்கவும்" 
+      : "⚠️ Enter valid quantity";
+    return;
+  }
+
+  const f = foods[foodKey];
+  const totalCal = f.cal * qty;
+
+  const name = currentLang==="ta" ? f.ta : f.en;
+
+  let resultText = currentLang==="ta"
+    ? name + " - " + qty +
+      "<br>கலோரி: " + totalCal +
+      "<br>கார்ப்ஸ்: " + (f.carbs * qty)
+    : name + " - " + qty +
+      "<br>Calories: " + totalCal +
+      "<br>Carbs: " + (f.carbs * qty);
+
+  if (totalCal > 300) {
+    resultText += currentLang==="ta" ? "<br>⚠️ அதிகம்!" : "<br>⚠️ Too much!";
+  } 
+  else if (f.gi === "High") {
+    resultText += currentLang==="ta" ? "<br>⚠️ தவிர்க்கவும்" : "<br>⚠️ Avoid";
+  } 
+  else {
+    resultText += currentLang==="ta" ? "<br>✅ சாப்பிடலாம்" : "<br>✅ Safe";
+  }
+
+  document.getElementById("result").innerHTML = resultText;
+}
+</script>
+
+</body>
+</html>
